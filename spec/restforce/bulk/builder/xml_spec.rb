@@ -29,4 +29,12 @@ describe Restforce::Bulk::Builder::Xml, mock_restforce: true do
 
     expect(payload).to eq(xml(:IsActive, false))
   end
+
+  it "serializes dates in iso8601 format" do
+    now = Time.now
+
+    payload = builder.generate([{At: now}])
+
+    expect(payload).to eq(xml(:At, now.iso8601))
+  end
 end

@@ -45,7 +45,7 @@ module Restforce
             data.each do |item|
               xml.sObject do
                 item.each do |attr, value|
-                  xml.send(attr, value, value.nil? ? {"xsi:nil" => true} : {})
+                  xml.send(attr, serialize_value(value), value_attributes(value))
                 end
               end
             end
@@ -53,6 +53,25 @@ module Restforce
         end
 
         protected
+
+        def value_attributes(value)
+          if value.nil?
+            {
+              "xsi:nil" => true
+            }
+          else
+            {}
+          end
+        end
+
+        def serialize_value(value)
+          case value
+          when Time
+            value.iso8601
+          else
+            value
+          end
+        end
 
         def build_xml(root, options={}, &block)
           Nokogiri::XML::Builder.new { |xml|
